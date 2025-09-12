@@ -1,3 +1,4 @@
+// used by unit tests.
 // ignore_for_file: unreachable_from_main
 
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
@@ -58,7 +59,7 @@ void main() {
 
       final scope = Scope()..value<int>(keyAge, 18);
 
-      final one = await scope.run<int>(() async {
+      final one = await scope.run<int>(() {
         final delayedvalue =
             Future<int>.delayed(const Duration(seconds: 1), () => use(keyAge));
 
@@ -300,54 +301,63 @@ String getRandString(int len) {
 }
 
 class A {
-  A(this.value);
   final String value;
+
+  A(this.value);
 }
 
 class B {
+  final A? a;
+
+  final C? c;
+
   B()
       : a = use(keyANull),
         c = use(keyC);
-
-  final A? a;
-  final C? c;
 }
 
 class C {
-  C() : a = use(keyANull);
   final A? a;
+
+  C() : a = use(keyANull);
 }
 
 class D {
-  D() : e = use(keyE);
-
   final E? e;
+
+  D() : e = use(keyE);
 }
 
 class E {
-  E() : f = use(keyF);
   final F? f;
+
+  E() : f = use(keyF);
 }
 
 class F {
+  final C? c;
+
+  final G? g;
+
   F()
       : c = use(keyC),
         g = use(keyG);
-  final C? c;
-  final G? g;
 }
 
 class G {
-  G() : e = use(keyE);
   final E? e;
+
+  G() : e = use(keyE);
 }
 
 class H {
-  H() : g = use(keyGNull);
   final G? g;
+
+  H() : g = use(keyGNull);
 }
 
 class I {
-  I(this.value);
   final String value;
+
+  I(this.value);
 }

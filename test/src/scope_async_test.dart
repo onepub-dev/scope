@@ -1,5 +1,3 @@
-// ignore_for_file: unreachable_from_main
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -24,7 +22,6 @@ const keyD = ScopeKey<D>('D');
 const keyE = ScopeKey<E>('E');
 const keyF = ScopeKey<F>('F');
 const keyG = ScopeKey<G>('G');
-const keyGNull = ScopeKey<G?>('G?');
 const keyI = ScopeKey<I>('I');
 const keyInt = ScopeKey<int>('int');
 
@@ -36,7 +33,7 @@ void main() {
     expect(syncVal, equals(1));
 
     final scope = Scope();
-    final asyncVal = await scope.run(() async => asyncTest());
+    final asyncVal = await scope.run(asyncTest);
 
     expect(asyncVal, equals(5));
   });
@@ -66,7 +63,7 @@ void main() {
 
       final scope = Scope()..value<int>(keyAge, 18);
 
-      final result = await scope.run<int>(() async {
+      final result = await scope.run<int>(() {
         final delayedvalue = Future<int>.delayed(oneSecond, () => use(keyAge));
 
         return delayedvalue;
@@ -78,44 +75,44 @@ void main() {
 
   group('existance', () {
     test('withinScope', () async {
-      await Scope().run(() async => Future.delayed(oneSecond, () {
+      await Scope().run(() => Future.delayed(oneSecond, () {
             expect(isWithinScope(), isTrue);
           }));
     });
     test(
         'not withinScope',
-        () async => Future.delayed(oneSecond, () {
+        () => Future.delayed(oneSecond, () {
               expect(isWithinScope(), isFalse);
             }));
 
     test('hasScopeKey', () async {
       final scope = Scope()..value<A>(keyA, A('A'));
-      await scope.run(() async => Future.delayed(oneSecond, () {
+      await scope.run(() => Future.delayed(oneSecond, () {
             expect(hasScopeKey<A>(keyA), isTrue);
           }));
     });
     test(
         'not hasScopeKey',
-        () async => Future.delayed(oneSecond, () {
+        () => Future.delayed(oneSecond, () {
               expect(hasScopeKey<A>(keyA), isFalse);
             }));
   });
   group('use()', () {
     test('outside of provide() fails', () async {
-      await Future.delayed(oneSecond, () async {
+      await Future.delayed(oneSecond, () {
         expect(() => use(keyS1), throwsMissingDependencyException);
       });
     });
 
     test('with not-provided key fails', () async {
       final scope = Scope()..value<String>(keyS2, 'value S2');
-      await scope.run(() async => Future.delayed(oneSecond, () {
+      await scope.run(() => Future.delayed(oneSecond, () {
             expect(() => use(keyS1), throwsMissingDependencyException);
           }));
     });
 
     test('with not-provided key uses default value if available', () async {
-      await Future.delayed(oneSecond, () async {
+      await Future.delayed(oneSecond, () {
         expect(use(keyStrWithDefault), 'StrWithDefault default value');
         expect(use(keyNullStrWithDefault), isNull);
         expect(use(keyNullStrWithDefault), isNull);
@@ -171,7 +168,7 @@ void main() {
   });
 
   group('provide()', () {
-    test('throws a CastError if key/value types are not compatible', () async {
+    test('throws a CastError if key/value types are not compatible', () {
       expect(() async {
         final scope = Scope()..value(keyS1, 1);
         await scope.run(() async {});
@@ -305,59 +302,63 @@ String getRandString(int len) {
 }
 
 class A {
-  A(this.value);
   final String value;
+
+  A(this.value);
 }
 
 class B {
+  final A? a;
+
+  final C? c;
+
   B()
       : a = use(keyANull),
         c = use(keyC);
-
-  final A? a;
-  final C? c;
 }
 
 class C {
-  C() : a = use(keyANull);
   final A? a;
+
+  C() : a = use(keyANull);
 }
 
 class D {
-  D() : e = use(keyE);
-
   final E? e;
+
+  D() : e = use(keyE);
 }
 
 class E {
-  E() : f = use(keyF);
   final F? f;
+
+  E() : f = use(keyF);
 }
 
 class F {
+  final C? c;
+
+  final G? g;
+
   F()
       : c = use(keyC),
         g = use(keyG);
-  final C? c;
-  final G? g;
 }
 
 class G {
-  G() : e = use(keyE);
   final E? e;
-}
 
-class H {
-  H() : g = use(keyGNull);
-  final G? g;
+  G() : e = use(keyE);
 }
 
 class I {
-  I(this.value);
+  // used in test.
+  // ignore: unreachable_from_main
   final String value;
+
+  I(this.value);
 }
 
 int syncTest() => 1;
 
-Future<int> asyncTest() async =>
-    Future.delayed(const Duration(seconds: 5), () => 5);
+Future<int> asyncTest() => Future.delayed(const Duration(seconds: 5), () => 5);

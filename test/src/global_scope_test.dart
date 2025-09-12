@@ -1,5 +1,3 @@
-// ignore_for_file: unreachable_from_main
-
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -22,7 +20,7 @@ void main() {
   GlobalScope().sequence<int>(counterKey, () => counter++);
 
   group('global scope', () {
-    test('value with override', () async {
+    test('value with override', () {
       expect(use(userKey), realUser);
 
       Scope()
@@ -33,7 +31,7 @@ void main() {
       expect(use(userKey), realUser);
     });
 
-    test('single with override', () async {
+    test('single with override', () {
       expect(use(userKey), realUser);
 
       Scope()
@@ -44,7 +42,7 @@ void main() {
       expect(use(userKey), realUser);
     });
 
-    test('sequences with override', () async {
+    test('sequences with override', () {
       expect(use(counterKey), 0);
       expect(use(counterKey), 1);
 
@@ -61,6 +59,9 @@ void main() {
 }
 
 class User {
-  User(this.name);
+  //
+  // ignore: unreachable_from_main
   String name;
+
+  User(this.name);
 }

@@ -16,9 +16,6 @@ typedef _ValueFactory<T> = T? Function();
 /// Used by [Scope.single].
 class SingleInjector extends Injector {
   ///
-  SingleInjector(this._factories) : super(<ScopeKey<dynamic>, dynamic>{});
-
-  ///
   final Map<ScopeKey<dynamic>, _ValueFactory<dynamic>> _factories;
 
   /// All keys from [_factories] for which the factory function has been called
@@ -27,7 +24,7 @@ class SingleInjector extends Injector {
   final underConstruction = LinkedHashSet<ScopeKey<dynamic>>();
 
   /// The zone that holds the injected values in this Scope
-  /// ```
+  /// ```dart
   ///   zone[Injector] == this
   /// ```
   ///
@@ -35,6 +32,9 @@ class SingleInjector extends Injector {
   /// so [Scope]s nested in  [Scope.single]  and [Scope.sequence] methods
   /// can't shadow keys from this [Scope].
   late Zone zone;
+
+  ///
+  SingleInjector(this._factories) : super(<ScopeKey<dynamic>, dynamic>{});
 
   @override
   T get<T>(ScopeKey<T> key) {
@@ -48,8 +48,8 @@ class SingleInjector extends Injector {
             List.unmodifiable(underConstruction.skipWhile((t) => t != key)));
       }
       values[key] = zone.run<T>(_factories[key]! as T Function());
-      // ignore: prefer_asserts_with_message
-      assert(underConstruction.last == key);
+      assert(
+          underConstruction.last == key, 'The key must be under construction');
       underConstruction.remove(key);
     }
     return values[key] as T;

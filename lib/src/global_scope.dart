@@ -1,3 +1,5 @@
+// ignore_for_file: document_ignores
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -15,15 +17,15 @@ import 'scope.dart';
 /// Values injected into a [GlobalScope] by injecting the
 /// same key into a [Scope].
 class GlobalScope {
-  /// Get the [GlobalScope] singleon
-  factory GlobalScope() => _self;
-
-  GlobalScope._internal();
-
   static final _self = GlobalScope._internal();
 
   // ignore: strict_raw_type
   final _values = <ScopeKey, dynamic>{};
+
+  /// Get the [GlobalScope] singleon
+  factory GlobalScope() => _self;
+
+  GlobalScope._internal();
 
   ///
   void value<T>(ScopeKey<T> key, T value) {
@@ -67,12 +69,12 @@ class GlobalScope {
   T _use<T>(ScopeKey<T> key, {T Function()? withDefault}) {
     T value;
     if (hasScopeKey(key)) {
-      final dynamic _value = _values[key];
-      if (_value is Function) {
+      final dynamic tmpValue = _values[key];
+      if (tmpValue is Function) {
         // ignore: avoid_dynamic_calls
-        value = _value.call() as T;
+        value = tmpValue.call() as T;
       } else {
-        value = _value as T;
+        value = tmpValue as T;
       }
     } else if (withDefault != null) {
       value = withDefault();

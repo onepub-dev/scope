@@ -31,11 +31,21 @@ part of 'scope.dart';
 /// ```
 @sealed
 class ScopeKey<T> {
+  final String _debugName;
+
+  /// We use [Object] to hold the default as it
+  /// can contain [_Sentinel.noValue]
+  /// A [_defaultValue] has three states
+  /// * [_Sentinel.noValue] indicating no default value
+  /// * null - a default value of null has been supplied
+  /// * some value.
+  final Object? _defaultValue;
+
   /// Create a ScopeKey with a specific type.
   ///
   /// You MUST provide the type!
   ///
-  /// ```
+  /// ```dart
   ///  ScopeKey<int> countKey = ScopeKey<int>();
   ///  Scope()
   ///  ..value(countKey, 1)
@@ -50,7 +60,7 @@ class ScopeKey<T> {
   /// Create a ScopeKey that provides a default value if the
   /// key has not been added to the scope.
   ///
-  /// ```
+  /// ```dart
   ///  ScopeKey<int> countKey = ScopeKey.withDefault<int>(0);
   ///
   ///  int count = use(countKey);
@@ -58,16 +68,6 @@ class ScopeKey<T> {
   ScopeKey.withDefault(T defaultValue, [String? debugName])
       : _defaultValue = defaultValue,
         _debugName = debugName ?? 'debugName=?';
-
-  final String _debugName;
-
-  /// We use [Object] to hold the default as it
-  /// can contain [_Sentinel.noValue]
-  /// A [_defaultValue] has three states
-  /// * [_Sentinel.noValue] indicating no default value
-  /// * null - a default value of null has been supplied
-  /// * some value.
-  final Object? _defaultValue;
 
   /// Returns true if the key was created with a default value.
   /// A default has three states

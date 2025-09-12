@@ -1,3 +1,5 @@
+// ignore_for_file: document_ignores
+
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -8,7 +10,7 @@
 /// and inject depedencies such as the tenant into each query.
 ///
 /// Class names borrowed from [simple_mysql_orm](https://pub.dev/packages/simple_mysql_orm).
-library scope.example;
+library;
 
 import 'package:money2/money2.dart';
 import 'package:scope/scope.dart';
@@ -54,13 +56,20 @@ Future<R?> withTransaction<R>(Future<R> Function() action) async {
     final transaction = Transaction<R>(db);
 
     return await (Scope()..value(Transaction.transactionKey, transaction))
-        .runSync(() async => transaction.run(action));
+        .runSync(() => transaction.run(action));
   } finally {
     DbPool().release(db);
   }
 }
 
 class Transaction<R> {
+  final Db db;
+
+  // ignore: strict_raw_type
+  static const transactionKey =
+      // ignore: strict_raw_type
+      ScopeKey<Transaction>('transaction');
+
   /// Create a database transaction for [db].
   ///
   Transaction(
@@ -82,16 +91,9 @@ class Transaction<R> {
     return transaction;
   }
 
-  final Db db;
-
-  // ignore: strict_raw_type
-  static const ScopeKey<Transaction> transactionKey =
-      // ignore: strict_raw_type
-      ScopeKey<Transaction>('transaction');
-
   Future<R?> run(Future<R> Function() action) async {
     /// run using a transaction
-    final result = db.transaction(() async => action());
+    final result = db.transaction(() => action());
     return result;
   }
 }

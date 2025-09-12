@@ -4,7 +4,7 @@
  * Written by Brett Sutton <bsutton@onepub.dev>, Jan 2022
  */
 
-library scope;
+library;
 
 import 'dart:async';
 
@@ -23,6 +23,14 @@ typedef _Factory = dynamic Function();
 ///
 /// Scopes may be nested with the nearest Scope overriding parent scopes.
 class Scope {
+  late final String _debugName;
+
+  final _provided = <ScopeKey<dynamic>, dynamic>{};
+
+  final _singles = <ScopeKey<dynamic>, _Factory>{};
+
+  final _sequences = <ScopeKey<dynamic>, _Factory>{};
+
   /// Create a [Scope] that allows you to inject values.
   ///
   /// Any methods directly or indirectly called from the
@@ -49,12 +57,6 @@ class Scope {
 
   @override
   String toString() => _debugName;
-
-  late final String _debugName;
-
-  final _provided = <ScopeKey<dynamic>, dynamic>{};
-  final _singles = <ScopeKey<dynamic>, _Factory>{};
-  final _sequences = <ScopeKey<dynamic>, _Factory>{};
 
   /// Injects [value] into the [Scope].
   ///
@@ -288,20 +290,20 @@ bool hasScopeValue<T>(ScopeKey<T> key) => _hasScopeValue(key);
 
 /// Returns true if [key] is contained within the current scope
 bool _hasScopeValue<T>(ScopeKey<T> key) {
-  var _hasScopeKey = true;
+  var hasScopeKey = true;
   final injector =
       (Zone.current[Injector] as Injector?) ?? const Injector.empty();
   if (injector.hasValue(key)) {
-    _hasScopeKey = true;
+    hasScopeKey = true;
   } else {
-    _hasScopeKey = false;
+    hasScopeKey = false;
   }
-  return _hasScopeKey;
+  return hasScopeKey;
 }
 
 /// Returns true if [key] is contained within the current scope
 bool _hasScopeKey<T>(ScopeKey<T> key) {
-  var _hasScopeKey = true;
+  var hasScopeKey = true;
   final injector =
       (Zone.current[Injector] as Injector?) ?? const Injector.empty();
   if (injector.hasKey(key)) {
@@ -309,11 +311,11 @@ bool _hasScopeKey<T>(ScopeKey<T> key) {
     // if (isNullable<T>() && value == null) {
     //   _hasScopeKey = false;
     // }
-    _hasScopeKey = true;
+    hasScopeKey = true;
   } else {
-    _hasScopeKey = false;
+    hasScopeKey = false;
   }
-  return _hasScopeKey;
+  return hasScopeKey;
 }
 
 /// Returns true if the caller is running within a [Scope]

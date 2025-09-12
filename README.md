@@ -30,9 +30,9 @@ const heightKey = ScopeKey<int>();
 const incomeKey = ScopeKey<Money>();
 const countKey = ScopeKey<int>();
 
-void main() {
+void main() async {
     /// create a Scope
-    Scope()
+    final scope = Scope()
     
     /// inject values
     ..value<int>(ageKey, 18)
@@ -40,10 +40,10 @@ void main() {
     /// single value from factory method
     ..single<Money>(incomeKey, () => calcIncome)
     /// sequence of values from factory method.
-    ..sequence<int>(countKey, () => tracker)
+    ..sequence<int>(countKey, () => tracker);
     
     /// run some code within the Scope
-    ..run(() => a();
+    await scope.run(() async => a();
 }
 void a() {
     print('Your height is ${use(heightKey)}');

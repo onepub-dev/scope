@@ -1,3 +1,4 @@
+//
 // ignore_for_file: unreachable_from_main
 
 /* Copyright (C) S. Brett Sutton - All Rights Reserved
@@ -86,12 +87,13 @@ void main() {
 }
 
 class User {
-  User(this.name);
   String name;
+
+  User(this.name);
 }
 
 class Db {
-  Db(this.databaseName);
-
   String databaseName;
+
+  Db(this.databaseName);
 }

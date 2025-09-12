@@ -14,6 +14,16 @@ import 'scope.dart';
 /// Implements the key store and lookup mechanism. The Injector [Type] is used
 /// as the key into a [Zone] to store the injector instance for that zone.
 class Injector {
+  @protected
+
+  ///
+  final Map<ScopeKey<dynamic>, dynamic> values;
+
+  @protected
+
+  ///
+  final Injector? parent;
+
   ///
   Injector(this.values) : parent = Zone.current[Injector] as Injector?;
 
@@ -21,15 +31,6 @@ class Injector {
   const Injector.empty()
       : values = const <ScopeKey<dynamic>, dynamic>{},
         parent = null;
-
-  @protected
-
-  ///
-  final Map<ScopeKey<dynamic>, dynamic> values;
-  @protected
-
-  ///
-  final Injector? parent;
 
   /// get the value associated with [key]
   T get<T>(ScopeKey<T> key) {
@@ -39,6 +40,7 @@ class Injector {
       /// If the value is a function then we have a sequence
       /// which is called each time [use] is called.
       if (value is Function) {
+        // 
         // ignore: avoid_dynamic_calls
         return value = value() as T;
       }
