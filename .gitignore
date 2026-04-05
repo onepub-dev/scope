@@ -13,3 +13,4 @@ pubspec.lock
 doc/api/
 .failed_tracker
 .history
+logs/analyzer.txt
